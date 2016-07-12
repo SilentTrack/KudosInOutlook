@@ -67,6 +67,11 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="AppRead\App.css" />
+    <Content Include="AppRead\App.js" />
+    <Content Include="AppRead\Home\Home.css" />
+    <Content Include="AppRead\Home\Home.html" />
+    <Content Include="AppRead\Home\Home.js" />
     <Content Include="packages.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
