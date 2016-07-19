@@ -12,98 +12,77 @@ var serviceRequest;
     // The Office initialize function must be run each time a new page is loaded
     Office.initialize = function (reason) {
         $(document).ready(function () {
-            app.initialize();
-
-            initApp();
+            InitPage();
         });
     };
-
-    function initApp() {
-        $("#footer").hide();
-
-        if (Office.context.mailbox.item.attachments == undefined) {
-            var testButton = document.getElementById("testButton");
-            testButton.onclick = "";
-            showToast("Not supported", "Attachments are not supported by your Exchange server.");
-        } else if (Office.context.mailbox.item.attachments.length == 0) {
-            var testButton = document.getElementById("testButton");
-            testButton.onclick = "";
-            showToast("No attachments", "There are no attachments on this item.");
-        } else {
-
-            // Initalize a context object for the app.
-            //   Set the fields that are used on the request
-            //   object to default values.
-            serviceRequest = new Object();
-            serviceRequest.attachmentToken = "";
-            serviceRequest.ewsUrl = Office.context.mailbox.ewsUrl;
-            serviceRequest.attachments = new Array();
-        }
-    };
-
 })();
 
-function testAttachments() {
-    Office.context.mailbox.getCallbackTokenAsync(attachmentTokenCallback);
-};
-
-function attachmentTokenCallback(asyncResult, userContext) {
-    if (asyncResult.status == "succeeded") {
-        serviceRequest.attachmentToken = asyncResult.value;
-        makeServiceRequest();
-    }
-    else {
-        showToast("Error", "Could not get callback token: " + asyncResult.error.message);
-    }
+function InitPage() {
+    $("#footer").hide();
+    document.getElementById("label1").innerHTML = Office.context.mailbox.item.sender.displayName + "?";
+    document.getElementById("label2").innerHTML = Office.context.mailbox.item.sender.displayName;
+    QueryKudosRequest();
 }
 
-function makeServiceRequest() {
-    xhr = new XMLHttpRequest();
-
-    // Update the URL to point to your service location.
-    xhr.open("POST", "https://localhost:44320/api/AttachmentService", true);
-
-    xhr.setRequestHeader("Content-Type", "application/json; charset=utf-8");
-    xhr.onreadystatechange = requestReadyStateChange;
-
-    // Translate the attachment details into a form easily understood by WCF.
-    for (i = 0; i < Office.context.mailbox.item.attachments.length; i++) {
-        serviceRequest.attachments[i] = JSON.parse(JSON.stringify(Office.context.mailbox.item.attachments[i].$0_0));
-    }
-
-    // Send the request. The response is handled in the 
-    // requestReadyStateChange function.
-    xhr.send(JSON.stringify(serviceRequest));
-};
-
-
-// Handles the response from the JSON web service.
-function requestReadyStateChange() {
-    if (xhr.readyState == 4) {
-        if (xhr.status == 200) {
-            var response = JSON.parse(xhr.responseText);
-            if (!response.isError) {
-                // The response indicates that the server recognized
-                // the client identity and processed the request.
-                // Show the response.
-                var names = "<h2>Attachments processed: " + response.attachmentsProcessed + "</h2>";
-
-                for (i = 0; i < response.attachmentNames.length; i++) {
-                    names += response.attachmentNames[i] + "<br />";
+function QueryKudosRequest() {
+    $.ajax({
+        url: "https://localhost:44372/api/KudosService?InternetMessageID=" + Office.context.mailbox.item.internetMessageId,
+        success: function (senders) {
+            if (senders.length > 0) {
+                for (var i = 0; i < senders.length; ++i)
+                {
+                    if (senders[i] == Office.context.mailbox.userProfile.displayName) {
+                        ChangeStatusToCantSendKudos();
+                    }
                 }
-                document.getElementById("names").innerHTML = names;
-            } else {
-                showToast("Runtime error", response.message);
+                var displayString = senders[0];
+                for (var i = 1; i < senders.length; ++i) {
+                    displayString += "\r\n" + senders[i];
+                }
+                document.getElementById("kudosQueryResult").value = displayString;
             }
-        } else {
-            if (xhr.status == 404) {
-                showToast("Service not found", "The app server could not be found.");
-            } else {
-                showToast("Unknown error", "There was an unexpected error: " + xhr.status + " -- " + xhr.statusText);
-            }
+        },
+    });
+}
+
+function SendKudosRequest() {
+    $.ajax({
+        type: "POST",
+        url: "https://localhost:44372/api/KudosService",
+        contentType: "application/json; charset=utf-8",
+        data: JSON.stringify(MakeSendKudosJson()),
+        dataType: "json",
+        success: function () {
+            QueryKudosRequest();
+        },
+        error: function () {
         }
-    }
+    });
 };
+
+function ChangeStatusToCantSendKudos() {
+    document.getElementById("sendKudos").innerHTML ="<span class=\"ms-Button-label\">You've already sent a kudos!</span>"
+    document.getElementById("sendKudos").onclick = "";
+}
+
+function MakeSendKudosJson() {
+    var item = Office.context.mailbox.item;
+    var json = {
+        "kudossender": Office.context.mailbox.userProfile.displayName,
+        "kudosreceiver": item.sender.displayName,
+        "internetmessageId": item.internetMessageId,
+        "additionalmessage": document.getElementById("kudosComment").value
+    };
+    return json;
+}
+
+function MakeQueryKudosJson() {
+    var item = Office.context.mailbox.item;
+    var json = {
+        "internetmessageId": item.internetMessageId,
+    };
+    return json;
+}
 
 // Shows the service response.
 function showResponse(response) {
@@ -123,32 +102,3 @@ function showToast(title, message) {
 
     window.setTimeout(function () { $("#footer").hide("slow") }, 10000);
 };
-
-// *********************************************************
-//
-// Outlook-Add-in-Javascript-GetAttachments, https://github.com/OfficeDev/Outlook-Add-in-Javascript-GetAttachments
-//
-// Copyright (c) Microsoft Corporation
-// All rights reserved.
-//
-// MIT License:
-// Permission is hereby granted, free of charge, to any person obtaining
-// a copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to
-// permit persons to whom the Software is furnished to do so, subject to
-// the following conditions:
-//
-// The above copyright notice and this permission notice shall be
-// included in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-//
-// *********************************************************

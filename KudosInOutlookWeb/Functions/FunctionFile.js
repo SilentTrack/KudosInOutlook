@@ -1,5 +1,6 @@
-﻿Office.initialize = function () {
-}
+﻿//Office.initialize = function () {
+//    $("#footer").hide();
+//}
 
 // Helper function to add a status message to the info bar.
 function statusUpdate(icon, text) {

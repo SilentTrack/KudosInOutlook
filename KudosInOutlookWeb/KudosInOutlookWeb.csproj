@@ -128,9 +128,6 @@
     <Content Include="Images\Icon16.png" />
     <Content Include="Images\Icon32.png" />
     <Content Include="Images\Icon80.png" />
-    <Content Include="MessageRead.css" />
-    <Content Include="MessageRead.html" />
-    <Content Include="MessageRead.js" />
     <Content Include="Scripts\FabricUI\MessageBanner.js" />
     <Content Include="Scripts\jquery-1.9.1.js" />
     <Content Include="Scripts\jquery-1.9.1.min.js" />
