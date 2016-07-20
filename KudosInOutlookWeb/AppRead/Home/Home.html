@@ -22,11 +22,16 @@
         <div class="padding">
             <h1>Send a Kudos to <label id="label1"></label></h1>
             <p>
-                Say a little something to <label id="label2"></label>:
+                Say a little something to <label id="label2"></label>:  
+                <textarea id="kudosComment" name="kudosComment" cols="20" rows="3"></textarea>
             </p>
             <p>
-                <textarea id="kudosComment" name="kudosComment" cols="20" rows="3"></textarea>
-                <textarea id="kudosQueryResult" name="kudosQueryResult" cols="50" rows="3"></textarea>
+                <table id="kudosQueryResult" border="1">
+                    <tr>
+                        <th>KudosSender</th>
+                        <th>SentTime</th>
+                    </tr>
+                </table>
             </p>
             <p>
                 <button class="ms-Button ms-Button--primary" id="sendKudos" onclick="SendKudosRequest()">

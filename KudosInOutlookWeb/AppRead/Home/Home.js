@@ -27,19 +27,26 @@ function InitPage() {
 function QueryKudosRequest() {
     $.ajax({
         url: "https://localhost:44372/api/KudosService?InternetMessageID=" + Office.context.mailbox.item.internetMessageId,
-        success: function (senders) {
-            if (senders.length > 0) {
-                for (var i = 0; i < senders.length; ++i)
-                {
-                    if (senders[i] == Office.context.mailbox.userProfile.displayName) {
+        success: function (result) {
+            var totalSenders = result.senders.length;
+            if (totalSenders > 0) {
+                for (var i = 0; i < totalSenders; ++i) {
+                    if (result.senders[i] == Office.context.mailbox.userProfile.displayName) {
                         ChangeStatusToCantSendKudos();
                     }
                 }
-                var displayString = senders[0];
-                for (var i = 1; i < senders.length; ++i) {
-                    displayString += "\r\n" + senders[i];
+
+                var newRow;
+                var table = document.getElementById("kudosQueryResult");
+                for (var i = 1; i < table.rows.length; ++i)
+                {
+                    table.deleteRow(i);
                 }
-                document.getElementById("kudosQueryResult").value = displayString;
+                for (var i = 0; i < totalSenders; ++i) {
+                    newRow = table.insertRow(table.rows.length);
+                    newRow.insertCell(0).innerHTML = result.senders[i];
+                    newRow.insertCell(1).innerHTML = result.sentTime[i];
+                }
             }
         },
     });
@@ -61,7 +68,7 @@ function SendKudosRequest() {
 };
 
 function ChangeStatusToCantSendKudos() {
-    document.getElementById("sendKudos").innerHTML ="<span class=\"ms-Button-label\">You've already sent a kudos!</span>"
+    document.getElementById("sendKudos").innerHTML = "<span class=\"ms-Button-label\">You've already sent a kudos!</span>"
     document.getElementById("sendKudos").onclick = "";
 }
 

@@ -17,11 +17,11 @@ namespace KudosService.Controllers
         public string AdditionalMessage { get; set; }
     }
 
-    public class QueryKudosJsonReceiver
+    public class QueryResult
     {
-        public string InternetMessageID { get; set; }
+        public string[] senders;
+        public string[] sentTime;
     }
-
 
     public class KudosServiceController : ApiController
     {
@@ -32,12 +32,12 @@ namespace KudosService.Controllers
         //}
 
         //GET: api/KudosService/5
-        public string[] Get(string InternetMessageID)
+        public QueryResult Get(string InternetMessageID)
         {
             String connectionString = "Data Source=tcp:q4j05d8bmm.database.windows.net;Initial Catalog=Kudos;User ID=kudoweb;Password=User@123";
             SqlConnection connection = new SqlConnection(connectionString);
             connection.Open();
-            String commandText = "SELECT Sender FROM KudosTable WHERE InternetMessageID = '" + InternetMessageID + "'";
+            String commandText = "SELECT Sender, SentTime FROM KudosTable WHERE InternetMessageID = '" + InternetMessageID + "'";
             //String commandText = "SELECT Receiver FROM KudosTable WHERE Sender = 'Zhaohua Feng'";
             SqlCommand selectCommand = new SqlCommand(commandText, connection);
             SqlDataAdapter selectAdapter = new SqlDataAdapter();
@@ -48,12 +48,15 @@ namespace KudosService.Controllers
             connection.Close();
 
             int totalSenders = dataSet.Tables[0].Rows.Count;
-            string[] senders = new string[totalSenders];
+            QueryResult result = new QueryResult();
+            result.senders = new string[totalSenders];
+            result.sentTime = new string[totalSenders];
             for (int i = 0; i < totalSenders; ++i)
             {
-                senders[i] = (string)dataSet.Tables[0].Rows[i].ItemArray[0];
+                result.senders[i] = (string)dataSet.Tables[0].Rows[i].ItemArray[0];
+                result.sentTime[i] = ((DateTime)dataSet.Tables[0].Rows[i].ItemArray[1]).ToString("yyyy-MM-dd HH:mm:ss");
             }
-            return senders;
+            return result;
         }
 
         // POST: api/KudosService
@@ -62,7 +65,10 @@ namespace KudosService.Controllers
             String connectionString = "Data Source=tcp:q4j05d8bmm.database.windows.net;Initial Catalog=Kudos;User ID=kudoweb;Password=User@123";
             SqlConnection connection = new SqlConnection(connectionString);
             connection.Open();
-            String commandText = "INSERT INTO KudosTable (Sender, Receiver, InternetMessageID, AdditionalMessage) VALUES ('" + value.KudosSender + "', '" + value.KudosReceiver + "', '" + value.InternetMessageID + "', '" + value.AdditionalMessage + "')";
+            string currentTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+            String commandText = "INSERT INTO KudosTable (Sender, Receiver, InternetMessageID, AdditionalMessage, SentTime) VALUES ('" + value.KudosSender + "', '" + value.KudosReceiver +
+                "', '" + value.InternetMessageID + "', '" + value.AdditionalMessage
+                + "', '" + currentTime + "')";
             SqlCommand insertCommand = new SqlCommand(commandText, connection);
             insertCommand.ExecuteNonQuery();
             connection.Close();
