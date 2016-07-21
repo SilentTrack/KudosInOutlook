@@ -19,34 +19,33 @@
 <body>
     <!-- Page content -->
     <div class="ms-font-m" id="content-main">
-        <div class="padding">
-            <h1>Send a Kudos to <label id="label1"></label></h1>
-            <p>
-                Say a little something to <label id="label2"></label>:  
-                <textarea id="kudosComment" name="kudosComment" cols="20" rows="3"></textarea>
-            </p>
-            <p>
-                <table id="kudosQueryResult" border="1">
-                    <tr>
-                        <th>KudosSender</th>
-                        <th>SentTime</th>
-                    </tr>
-                </table>
-            </p>
-            <p>
-                <button class="ms-Button ms-Button--primary" id="sendKudos" onclick="SendKudosRequest()">
-                    <span class="ms-Button-label">Send Kudos!</span>
-                </button>
-                <button class="ms-Button ms-Button--primary" id="queryKudos" onclick="QueryKudosRequest()">
-                    <span class="ms-Button-label">Refresh Kudos</span>
-                </button>
-            </p>
-            <div id="footer" class="toast">
-                <span id="notice" style="font-weight: bold; margin-top: 5px"></span>
-                <br />
-                <span id="output"></span>
-            </div>
-
+        <div id="thumbNail">
+        </div>
+        <h1>Send a Kudos to <label id="label1"></label></h1>
+        <p>
+            Say a little something to <label id="label2"></label>:
+            <textarea id="kudosComment" name="kudosComment" cols="20" rows="3"></textarea>
+        </p>
+        <p>
+            <table id="kudosQueryResult" border="1">
+                <tr>
+                    <th>KudosSender</th>
+                    <th>SentTime</th>
+                </tr>
+            </table>
+        </p>
+        <p>
+            <button class="ms-Button ms-Button--primary" id="sendKudos" onclick="SendKudosRequest()">
+                <span class="ms-Button-label">Send Kudos!</span>
+            </button>
+            <button class="ms-Button ms-Button--primary" id="queryKudos" onclick="QueryKudosRequest()">
+                <span class="ms-Button-label">Refresh Kudos</span>
+            </button>
+        </p>
+        <div id="footer" class="toast">
+            <span id="notice" style="font-weight: bold; margin-top: 5px"></span>
+            <br />
+            <span id="output"></span>
         </div>
     </div>
 </body>

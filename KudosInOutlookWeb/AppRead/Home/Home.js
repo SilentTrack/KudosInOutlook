@@ -38,14 +38,22 @@ function QueryKudosRequest() {
 
                 var newRow;
                 var table = document.getElementById("kudosQueryResult");
-                for (var i = 1; i < table.rows.length; ++i)
-                {
+                for (var i = 1; i < table.rows.length; ++i) {
                     table.deleteRow(i);
+                }
+
+                while (document.getElementById("thumbNail").hasChildNodes()) {
+                    document.getElementById("thumbNail").removeChild(document.getElementById("thumbNail").firstChild);
                 }
                 for (var i = 0; i < totalSenders; ++i) {
                     newRow = table.insertRow(table.rows.length);
                     newRow.insertCell(0).innerHTML = result.senders[i];
                     newRow.insertCell(1).innerHTML = result.sentTime[i];
+                    var img = document.createElement("img");
+                    img.src = "data:image/jpeg;base64," + result.thumbNails[i];
+                    img.width = 48;
+                    img.height = 48;
+                    document.getElementById("thumbNail").appendChild(img);
                 }
             }
         },
@@ -78,7 +86,8 @@ function MakeSendKudosJson() {
         "kudossender": Office.context.mailbox.userProfile.displayName,
         "kudosreceiver": item.sender.displayName,
         "internetmessageId": item.internetMessageId,
-        "additionalmessage": document.getElementById("kudosComment").value
+        "additionalmessage": document.getElementById("kudosComment").value,
+        "senderemailaddress": Office.context.mailbox.userProfile.emailAddress
     };
     return json;
 }
