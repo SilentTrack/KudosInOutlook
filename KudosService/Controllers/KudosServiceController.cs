@@ -98,14 +98,6 @@ namespace KudosService.Controllers
 
         private static readonly Uri returnUrl = new Uri("urn:ietf:wg:oauth:2.0:oob");
 
-        public static string AccessToken
-        {
-            get
-            {
-                return GetAppTokenAsync().Result;
-            }
-        }
-
         private static async Task<string> GetAppTokenAsync()
         {
             var authContext = new AuthenticationContext(authority, new FileTokenCache());
@@ -148,10 +140,12 @@ namespace KudosService.Controllers
 
         public static async Task<string> FetchAsync(string query)
         {
+            var accessToken = await GetAppTokenAsync();
+
             var graphserviceClient = new GraphServiceClient(
                 new DelegateAuthenticationProvider((requestMessage) =>
                 {
-                    requestMessage.Headers.Authorization = new AuthenticationHeaderValue("bearer", AccessToken);
+                    requestMessage.Headers.Authorization = new AuthenticationHeaderValue("bearer", accessToken);
                     return Task.FromResult(0);
                 })
             );
