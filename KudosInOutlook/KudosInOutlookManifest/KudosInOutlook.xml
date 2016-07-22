@@ -41,7 +41,7 @@
     <Form xsi:type="ItemRead">
       <DesktopSettings>
         <SourceLocation DefaultValue="~remoteAppUrl/AppRead/Home/Home.html"/>
-        <RequestedHeight>250</RequestedHeight>
+        <RequestedHeight>400</RequestedHeight>
       </DesktopSettings>
     </Form>
   </FormSettings>
@@ -51,4 +51,77 @@
     <Rule xsi:type="ItemIs" ItemType="Message" FormType="Read" />
   </Rule>
   <DisableEntityHighlighting>false</DisableEntityHighlighting>
+
+  <VersionOverrides xmlns="http://schemas.microsoft.com/office/mailappversionoverrides" xsi:type="VersionOverridesV1_0">
+    <Requirements>
+      <bt:Sets DefaultMinVersion="1.1">
+        <bt:Set Name="Mailbox" />
+      </bt:Sets>
+    </Requirements>
+    <Hosts>
+      <Host xsi:type="MailHost">
+
+        <DesktopFormFactor>
+          <!-- Location of the Functions that UI-less buttons can trigger (ExecuteFunction Actions) -->
+          <FunctionFile resid="functionFile" />
+
+          <ExtensionPoint xsi:type="CustomPane">
+            <RequestedHeight>400</RequestedHeight>
+            <SourceLocation resid="customPaneUrl"/>
+            <Rule xsi:type="RuleCollection" Mode="Or">
+              <Rule xsi:type="ItemIs" ItemType="Message"/>
+              <Rule xsi:type="ItemIs" ItemType="AppointmentAttendee"/>
+            </Rule>
+          </ExtensionPoint>
+
+          <!-- Message Compose -->
+          <ExtensionPoint xsi:type="MessageReadCommandSurface">
+            <!-- Use the default tab of the ExtensionPoint or create your own with <CustomTab id="myTab"> -->
+            <OfficeTab id="TabDefault">
+              <!-- Up to 6 Groups added per Tab -->
+              <Group id="msgEditGroup">
+                <Label resid="groupEditLabel" />
+                <!-- Launch the add-in : task pane button -->
+                <Control xsi:type="Button" id="msgEditOpenPaneButton">
+                  <Label resid="paneEditButtonLabel" />
+                  <Supertip>
+                    <Title resid="paneEditSuperTipTitle" />
+                    <Description resid="paneEditSuperTipDescription" />
+                  </Supertip>
+                  <Icon>
+                    <bt:Image size="16" resid="icon16" />
+                    <bt:Image size="32" resid="icon32" />
+                    <bt:Image size="80" resid="icon80" />
+                  </Icon>
+                  <Action xsi:type="ShowTaskpane">
+                    <SourceLocation resid="messageEditTaskPaneUrl" />
+                  </Action>
+                </Control>
+              </Group>
+            </OfficeTab>
+          </ExtensionPoint>
+        </DesktopFormFactor>
+      </Host>
+    </Hosts>
+
+    <Resources>
+      <bt:Images>
+        <bt:Image id="icon16" DefaultValue="~remoteAppUrl/images/icon16.png"/>
+        <bt:Image id="icon32" DefaultValue="~remoteAppUrl/images/icon32.png"/>
+        <bt:Image id="icon80" DefaultValue="~remoteAppUrl/images/icon80.png"/>
+      </bt:Images>
+      <bt:Urls>
+        <bt:Url id="customPaneUrl" DefaultValue="~remoteAppUrl/AppRead/Home/Home.html"/>
+        <bt:Url id="messageEditTaskPaneUrl" DefaultValue="~remoteAppUrl/AppRead/RibbonHome/Home.html"/>
+      </bt:Urls>
+      <bt:ShortStrings>
+        <bt:String id="groupEditLabel" DefaultValue="KudosInOutlook"/>
+        <bt:String id="paneEditButtonLabel" DefaultValue="QueryKudos"/>
+        <bt:String id="paneEditSuperTipTitle" DefaultValue="333333333"/>
+      </bt:ShortStrings>
+      <bt:LongStrings>
+        <bt:String id="paneEditSuperTipDescription" DefaultValue="44444444444"/>
+      </bt:LongStrings>
+    </Resources>
+  </VersionOverrides>
 </OfficeApp>

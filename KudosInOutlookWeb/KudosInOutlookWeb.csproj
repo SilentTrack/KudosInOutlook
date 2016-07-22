@@ -73,6 +73,9 @@
   <ItemGroup>
     <Content Include="AppRead\App.css" />
     <Content Include="AppRead\App.js" />
+    <Content Include="AppRead\RibbonHome\Home.css" />
+    <Content Include="AppRead\RibbonHome\Home.html" />
+    <Content Include="AppRead\RibbonHome\Home.js" />
     <Content Include="AppRead\Home\Home.css" />
     <Content Include="AppRead\Home\Home.html" />
     <Content Include="AppRead\Home\Home.js" />
