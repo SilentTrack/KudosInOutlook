@@ -18,108 +18,55 @@ var serviceRequest;
 })();
 
 function InitPage() {
-    $("#footer").hide();
-    //document.getElementById("label1").innerHTML = Office.context.mailbox.item.sender.displayName + "?";
-    //document.getElementById("label2").innerHTML = Office.context.mailbox.item.sender.displayName;
-    QueryKudosRequest();
-    QueryTotalKudos();
+    var itemId = Office.context.mailbox.item.itemId;
+    var ewsId = Office.context.mailbox.convertToEwsId(itemId, Office.MailboxEnums.RestVersion.v2_0);
+    $("#testLink").click(function () {
+        Office.context.mailbox.displayMessageForm(ewsId);
+    });
+    ShowChart();
 }
 
-function QueryTotalKudos() {
-
-}
-
-function QueryKudosRequest() {
-    $.ajax({
-        url: "https://localhost:44372/api/KudosService?InternetMessageID=" + Office.context.mailbox.item.internetMessageId,
-        success: function (result) {
-            var totalSenders = result.senders.length;
-            if (totalSenders > 0) {
-                for (var i = 0; i < totalSenders; ++i) {
-                    if (result.senders[i] == Office.context.mailbox.userProfile.displayName) {
-                        ChangeStatusToCantSendKudos();
+function ShowChart() {
+    Chart.defaults.global.defaultFontSize = 11;
+    var ctx = $("#dataChart");
+    var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ["Mar", "Apr", "May", "Jun", "Jul"], //Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec
+            datasets: [{
+                label: 'Kudos/Month',
+                data: [5, 0, 10, 12, 7],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255,99,132,1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
                     }
-                }
-
-                var newRow;
-                var table = document.getElementById("kudosQueryResult");
-                for (var i = 1; i < table.rows.length; ++i) {
-                    table.deleteRow(i);
-                }
-
-                while (document.getElementById("thumbNail").hasChildNodes()) {
-                    document.getElementById("thumbNail").removeChild(document.getElementById("thumbNail").firstChild);
-                }
-                for (var i = 0; i < totalSenders; ++i) {
-                    newRow = table.insertRow(table.rows.length);
-                    newRow.insertCell(0).innerHTML = result.senders[i];
-                    newRow.insertCell(1).innerHTML = result.sentTime[i];
-                    var img = document.createElement("img");
-                    img.src = "data:image/jpeg;base64," + result.thumbNails[i];
-                    img.width = 48;
-                    img.height = 48;
-                    document.getElementById("thumbNail").appendChild(img);
+                }]
+            },
+            legend: {
+                labels: {
+                    fontSize: 11,
+                    boxWidth: 25
                 }
             }
-        },
-    });
-}
-
-function SendKudosRequest() {
-    $.ajax({
-        type: "POST",
-        url: "https://localhost:44372/api/KudosService",
-        contentType: "application/json; charset=utf-8",
-        data: JSON.stringify(MakeSendKudosJson()),
-        dataType: "json",
-        success: function () {
-            QueryKudosRequest();
-        },
-        error: function () {
         }
     });
-};
-
-function ChangeStatusToCantSendKudos() {
-    document.getElementById("sendKudos").innerHTML = "<span class=\"ms-Button-label\">You've already sent a kudos!</span>"
-    document.getElementById("sendKudos").onclick = "";
 }
-
-function MakeSendKudosJson() {
-    var item = Office.context.mailbox.item;
-    var json = {
-        "kudossender": Office.context.mailbox.userProfile.displayName,
-        "kudosreceiver": item.sender.displayName,
-        "internetmessageId": item.internetMessageId,
-        "additionalmessage": document.getElementById("kudosComment").value,
-        "senderemailaddress": Office.context.mailbox.userProfile.emailAddress
-    };
-    return json;
-}
-
-function MakeQueryKudosJson() {
-    var item = Office.context.mailbox.item;
-    var json = {
-        "internetmessageId": item.internetMessageId,
-    };
-    return json;
-}
-
-// Shows the service response.
-function showResponse(response) {
-    showToast("Service Response", "Attachments processed: " + response.attachmentsProcessed);
-}
-
-// Displays a message for 10 seconds.
-function showToast(title, message) {
-
-    var notice = document.getElementById("notice");
-    var output = document.getElementById('output');
-
-    notice.innerHTML = title;
-    output.innerHTML = message;
-
-    $("#footer").show("slow");
-
-    window.setTimeout(function () { $("#footer").hide("slow") }, 10000);
-};
