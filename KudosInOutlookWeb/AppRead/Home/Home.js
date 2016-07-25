@@ -5,6 +5,8 @@
 /// <reference path="../App.js" />
 var xhr;
 var serviceRequest;
+var serviceBaseUrl = "https://kudosservice.azurewebsites.net";
+//var serviceBaseUrl = "https://localhost:44372";
 
 (function () {
     "use strict";
@@ -27,8 +29,9 @@ function InitPage() {
 function QueryKudosRequest() {
     var itemID = Office.context.mailbox.item.itemId;
     $.ajax({
-        url: "https://localhost:44372/api/KudosService?ItemID=" + encodeURIComponent(itemID),
+        url: serviceBaseUrl + "/api/KudosService?ItemID=" + encodeURIComponent(itemID),
         success: function (result) {
+            $("#thumbNail").html(result.senders.length);
             var totalSenders = result.senders.length;
             if (totalSenders > 0) {
                 for (var i = 0; i < totalSenders; ++i) {
@@ -58,6 +61,9 @@ function QueryKudosRequest() {
                 }
             }
         },
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.log(textStatus, errorThrown);
+        }
     });
 }
 
@@ -65,7 +71,7 @@ function SendKudosRequest() {
     ChangeStatusToCantSendKudos();
     $.ajax({
         type: "POST",
-        url: "https://localhost:44372/api/KudosService",
+        url: serviceBaseUrl + "/api/KudosService",
         contentType: "application/json; charset=utf-8",
         data: JSON.stringify(MakeSendKudosJson()),
         dataType: "json",
