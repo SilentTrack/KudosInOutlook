@@ -17,47 +17,34 @@ var serviceRequest;
     };
 })();
 
+var months;
+var kudosData;
+var totalKudos;
+
 function InitPage() {
     $.ajax({
-        url: "https://localhost:44372/api/KudosService/5/?KudosReceiver=MasouShizuka",
+        //url: "https://localhost:44372/api/KudosService/5/?KudosReceiver=" + Office.context.mailbox.userProfile.displayName,
+        url: "https://localhost:44372/api/KudosService/5/?KudosReceiver=" + "Junxiang Wang",
         success: function (result) {
-            var totalSenders = result.senders.length;
-            if (totalSenders > 0) {
-                for (var i = 0; i < totalSenders; ++i) {
-                    if (result.senders[i]== Office.context.mailbox.userProfile.displayName) {
-                        ChangeStatusToCantSendKudos();
-                    }
-                    }
-
-                var newRow;
-                var table = document.getElementById("kudosQueryResult");
-                for (var i = 1; i < table.rows.length; ++i) {
-                    table.deleteRow(i);
-                }
-
-                while (document.getElementById("thumbNail").hasChildNodes()) {
-                    document.getElementById("thumbNail").removeChild(document.getElementById("thumbNail").firstChild);
-                    }
-                for (var i = 0; i < totalSenders; ++i) {
-                    newRow = table.insertRow(table.rows.length);
-                    newRow.insertCell(0).innerHTML = result.senders[i];
-                    newRow.insertCell(1).innerHTML = result.sentTime[i];
-                    var img = document.createElement("img");
-                    img.src = "data:image/jpeg;base64," +result.thumbNails[i];
-                    img.width = 48;
-                    img.height = 48;
-                    document.getElementById("thumbNail").appendChild(img);
-                }
-            }
+            months = result.months;
+            kudosData = result.kudosPerMonth;
+            totalKudos = result.totalKudos;
+            document.getElementById("dataTotal").innerHTML = totalKudos;
+            var itemId = Office.context.mailbox.item.itemId;
+            var ewsId = Office.context.mailbox.convertToEwsId(itemId, Office.MailboxEnums.RestVersion.v2_0);
+            $("#testLink").click(function () {
+                Office.context.mailbox.displayMessageForm(ewsId);
+            });
+            ShowChart();
         },
-        });
-
-    var itemId = Office.context.mailbox.item.itemId;
-    var ewsId = Office.context.mailbox.convertToEwsId(itemId, Office.MailboxEnums.RestVersion.v2_0);
-    $("#testLink").click(function () {
-        Office.context.mailbox.displayMessageForm(ewsId);
+        error: function () {
+            months = result.months;
+            kudosData = result.kudosPerMonth;
+            totalKudos = result.totalKudos;
+        }
     });
-    ShowChart();
+
+
 }
 
 function ShowChart() {
@@ -66,23 +53,25 @@ function ShowChart() {
     var myChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: ["Mar", "Apr", "May", "Jun", "Jul"], //Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec
+            //labels: ["Mar", "Apr", "May", "Jun", "Jul"], //Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec
+            labels: months,
             datasets: [{
                 label: 'Kudos/Month',
-                data: [5, 0, 10, 12, 7],
+                //data: [5, 0, 10, 12, 7],
+                data: kudosData,
                 backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(153, 102, 255, 0.2)'
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)'
                 ],
                 borderColor: [
-                    'rgba(255,99,132,1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(153, 102, 255, 1)'
+            'rgba(255,99,132,1)',
+        'rgba(54, 162, 235, 1)',
+        'rgba(255, 206, 86, 1)',
+        'rgba(75, 192, 192, 1)',
+        'rgba(153, 102, 255, 1)'
                 ],
                 borderWidth: 1
             }]
