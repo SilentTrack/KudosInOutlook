@@ -32,14 +32,34 @@ namespace KudosService.Controllers
         public string[] thumbNails;
     }
 
+    public class KudosInfo : IComparable
+    {
+        public string sender;
+        public string itemID;
+        public DateTime sentTime;
+        public string additionalMessage;
+
+        public KudosInfo()
+        {
+            sender = "";
+            itemID = "";
+            sentTime = new DateTime();
+            additionalMessage = "";
+        }
+
+        public int CompareTo(Object obj)
+        {
+            KudosInfo t = obj as KudosInfo;
+            return sentTime.CompareTo(t.sentTime);
+        }
+    }
+
     public class QueryReceiverResult
     {
-        public string[] senders;
-        public string[] itemIDs;
-        public DateTime[] sentTime;
-        public string[] additionalMessage;
+        public KudosInfo[] kudosInfos;
         public string[] months;
         public int[] kudosPerMonth;
+        public int totalKudos;
     }
 
     class FileTokenCache : TokenCache
@@ -193,6 +213,9 @@ namespace KudosService.Controllers
         //}
 
         //GET: api/KudosService
+
+        public static string[] monthsRef = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
+
         public QueryThreadResult Get(string ItemID)
         {
             String connectionString = "Data Source=tcp:q4j05d8bmm.database.windows.net;Initial Catalog=Kudos;User ID=kudoweb;Password=User@123";
@@ -238,18 +261,61 @@ namespace KudosService.Controllers
 
             int totalSenders = dataSet.Tables[0].Rows.Count;
             QueryReceiverResult result = new QueryReceiverResult();
-            result.senders = new string[totalSenders];
-            result.sentTime = new DateTime[totalSenders];
-            result.itemIDs = new string[totalSenders];
-            result.months = new string[5];
-            result.kudosPerMonth = new int[5];
+            result.kudosInfos = new KudosInfo[totalSenders];
             for (int i = 0; i < totalSenders; ++i)
             {
-                result.senders[i] = (string)dataSet.Tables[0].Rows[i].ItemArray[0];
-                result.itemIDs[i] = (string)dataSet.Tables[0].Rows[i].ItemArray[1];
-                result.sentTime[i] = (DateTime)dataSet.Tables[0].Rows[i].ItemArray[2];
-                result.additionalMessage[i] = (string)dataSet.Tables[0].Rows[i].ItemArray[3];
-                //result.sentTime[i].CompareTo
+                result.kudosInfos[i] = new KudosInfo();
+                result.kudosInfos[i].sender = (string)dataSet.Tables[0].Rows[i].ItemArray[0];
+                result.kudosInfos[i].itemID = (string)dataSet.Tables[0].Rows[i].ItemArray[1];
+                result.kudosInfos[i].sentTime = (DateTime)dataSet.Tables[0].Rows[i].ItemArray[2];
+                result.kudosInfos[i].additionalMessage = (string)dataSet.Tables[0].Rows[i].ItemArray[3];
+            }
+            Array.Sort(result.kudosInfos);
+            result.months = GenerateFiveMonths(DateTime.Now);
+            result.kudosPerMonth = CountKudosBefore(DateTime.Now, result.kudosInfos);
+            result.totalKudos = totalSenders;
+            return result;
+        }
+
+        int[] CountKudosBefore(DateTime currentTime, KudosInfo[] kudosInfo)
+        {
+            int[] result = new int[5];
+            DateTime startTime = currentTime;
+            startTime.AddHours(-startTime.Hour);
+            startTime.AddMinutes(-startTime.Minute);
+            startTime.AddSeconds(-startTime.Second);
+            startTime.AddMilliseconds(-startTime.Millisecond);
+
+            startTime = startTime.AddDays(1 - startTime.Day);
+            startTime = startTime.AddMonths(-4);
+            foreach (KudosInfo info in kudosInfo)
+            {
+                DateTime time = info.sentTime;
+                if ((time.CompareTo(startTime) >= 0) && (time.CompareTo(currentTime) <= 0))
+                {
+                    int t = time.Month - startTime.Month;
+                    if (t < 0)
+                    {
+                        t += 12;
+                    }
+                    ++result[t];
+                }
+            }
+            return result;
+        }
+
+        string[] GenerateFiveMonths(DateTime currentTime)
+        {
+            string[] result = new string[5];
+            int month = currentTime.Month;
+            for (int i = 0; i < 5; ++i)
+            {
+                result[4 - i] = monthsRef[month - 1];
+                --month;
+                if (month == 0)
+                {
+                    month = 12;
+                }
             }
             return result;
         }
