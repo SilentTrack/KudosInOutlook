@@ -5,7 +5,6 @@
 /// <reference path="../App.js" />
 var xhr;
 var serviceRequest;
-var serviceBaseUrl = "https://kudosservice.azurewebsites.net";
 
 (function () {
     "use strict";
@@ -26,8 +25,9 @@ function InitPage() {
 }
 
 function QueryKudosRequest() {
+    var itemID = Office.context.mailbox.item.itemId;
     $.ajax({
-        url: "/api/KudosService?InternetMessageID=" + Office.context.mailbox.item.internetMessageId,
+        url: "https://localhost:44372/api/KudosService?ItemID=" + encodeURIComponent(itemID),
         success: function (result) {
             var totalSenders = result.senders.length;
             if (totalSenders > 0) {
@@ -62,6 +62,7 @@ function QueryKudosRequest() {
 }
 
 function SendKudosRequest() {
+    ChangeStatusToCantSendKudos();
     $.ajax({
         type: "POST",
         url: "https://localhost:44372/api/KudosService",
@@ -86,17 +87,9 @@ function MakeSendKudosJson() {
     var json = {
         "kudossender": Office.context.mailbox.userProfile.displayName,
         "kudosreceiver": item.sender.displayName,
-        "internetmessageId": item.internetMessageId,
+        "itemid": Office.context.mailbox.item.itemId,
         "additionalmessage": document.getElementById("kudosComment").value,
         "senderemailaddress": Office.context.mailbox.userProfile.emailAddress
-    };
-    return json;
-}
-
-function MakeQueryKudosJson() {
-    var item = Office.context.mailbox.item;
-    var json = {
-        "internetmessageId": item.internetMessageId,
     };
     return json;
 }

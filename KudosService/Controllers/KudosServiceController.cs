@@ -12,6 +12,7 @@ using System.IO;
 using System.Net.Http.Headers;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using System.Globalization;
+using System.Web;
 
 namespace KudosService.Controllers
 {
@@ -19,16 +20,26 @@ namespace KudosService.Controllers
     {
         public string KudosSender { get; set; }
         public string KudosReceiver { get; set; }
-        public string InternetMessageID { get; set; }
+        public string ItemID { get; set; }
         public string AdditionalMessage { get; set; }
         public string SenderEmailAddress { get; set; }
     }
 
-    public class QueryResult
+    public class QueryThreadResult
     {
         public string[] senders;
         public string[] sentTime;
         public string[] thumbNails;
+    }
+
+    public class QueryReceiverResult
+    {
+        public string[] senders;
+        public string[] itemIDs;
+        public DateTime[] sentTime;
+        public string[] additionalMessage;
+        public string[] months;
+        public int[] kudosPerMonth;
     }
 
     class FileTokenCache : TokenCache
@@ -181,14 +192,13 @@ namespace KudosService.Controllers
         //    return new string[] { "value1", "value2" };
         //}
 
-        //GET: api/KudosService/5
-        public QueryResult Get(string InternetMessageID)
+        //GET: api/KudosService
+        public QueryThreadResult Get(string ItemID)
         {
             String connectionString = "Data Source=tcp:q4j05d8bmm.database.windows.net;Initial Catalog=Kudos;User ID=kudoweb;Password=User@123";
             SqlConnection connection = new SqlConnection(connectionString);
             connection.Open();
-            String commandText = "SELECT Sender, SentTime, Thumbnail FROM KudosTable WHERE InternetMessageID = '" + InternetMessageID + "'";
-            //String commandText = "SELECT Receiver FROM KudosTable WHERE Sender = 'Zhaohua Feng'";
+            String commandText = "SELECT Sender, SentTime, Thumbnail FROM KudosTable WHERE ItemID = '" + ItemID + "'";
             SqlCommand selectCommand = new SqlCommand(commandText, connection);
             SqlDataAdapter selectAdapter = new SqlDataAdapter();
             selectAdapter.SelectCommand = selectCommand;
@@ -198,7 +208,7 @@ namespace KudosService.Controllers
             connection.Close();
 
             int totalSenders = dataSet.Tables[0].Rows.Count;
-            QueryResult result = new QueryResult();
+            QueryThreadResult result = new QueryThreadResult();
             result.senders = new string[totalSenders];
             result.sentTime = new string[totalSenders];
             result.thumbNails = new string[totalSenders];
@@ -207,6 +217,39 @@ namespace KudosService.Controllers
                 result.senders[i] = (string)dataSet.Tables[0].Rows[i].ItemArray[0];
                 result.sentTime[i] = ((DateTime)dataSet.Tables[0].Rows[i].ItemArray[1]).ToString("yyyy-MM-dd HH:mm:ss");
                 result.thumbNails[i] = (string)dataSet.Tables[0].Rows[i].ItemArray[2];
+            }
+            return result;
+        }
+
+        //GET: api/KudosService/id
+        public QueryReceiverResult Get(int id, string KudosReceiver)
+        {
+            String connectionString = "Data Source=tcp:q4j05d8bmm.database.windows.net;Initial Catalog=Kudos;User ID=kudoweb;Password=User@123";
+            SqlConnection connection = new SqlConnection(connectionString);
+            connection.Open();
+            String commandText = "SELECT Sender, ItemID, SentTime, AdditionalMessage FROM KudosTable WHERE Receiver = '" + KudosReceiver + "'";
+            SqlCommand selectCommand = new SqlCommand(commandText, connection);
+            SqlDataAdapter selectAdapter = new SqlDataAdapter();
+            selectAdapter.SelectCommand = selectCommand;
+            DataSet dataSet = new DataSet();
+            selectAdapter.SelectCommand.ExecuteNonQuery();
+            selectAdapter.Fill(dataSet);
+            connection.Close();
+
+            int totalSenders = dataSet.Tables[0].Rows.Count;
+            QueryReceiverResult result = new QueryReceiverResult();
+            result.senders = new string[totalSenders];
+            result.sentTime = new DateTime[totalSenders];
+            result.itemIDs = new string[totalSenders];
+            result.months = new string[5];
+            result.kudosPerMonth = new int[5];
+            for (int i = 0; i < totalSenders; ++i)
+            {
+                result.senders[i] = (string)dataSet.Tables[0].Rows[i].ItemArray[0];
+                result.itemIDs[i] = (string)dataSet.Tables[0].Rows[i].ItemArray[1];
+                result.sentTime[i] = (DateTime)dataSet.Tables[0].Rows[i].ItemArray[2];
+                result.additionalMessage[i] = (string)dataSet.Tables[0].Rows[i].ItemArray[3];
+                //result.sentTime[i].CompareTo
             }
             return result;
         }
@@ -220,10 +263,10 @@ namespace KudosService.Controllers
             string currentTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
             string base64 = await ThumbnailFetcher.FetchAsync(value.SenderEmailAddress);
             String commandText =
-                "INSERT INTO KudosTable (Sender, Receiver, InternetMessageID, AdditionalMessage, SentTime, Thumbnail) VALUES ('"
+                "INSERT INTO KudosTable (Sender, Receiver, ItemID, AdditionalMessage, SentTime, Thumbnail) VALUES ('"
                 + value.KudosSender
                 + "', '" + value.KudosReceiver
-                + "', '" + value.InternetMessageID
+                + "', '" + value.ItemID
                 + "', '" + value.AdditionalMessage
                 + "', '" + currentTime
                 + "', '" + base64
