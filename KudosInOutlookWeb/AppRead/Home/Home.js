@@ -5,6 +5,7 @@
 /// <reference path="../App.js" />
 var xhr;
 var serviceRequest;
+var serviceBaseUrl = "https://kudosservice.azurewebsites.net";
 
 (function () {
     "use strict";
@@ -26,7 +27,7 @@ function InitPage() {
 
 function QueryKudosRequest() {
     $.ajax({
-        url: "https://localhost:44372/api/KudosService?InternetMessageID=" + Office.context.mailbox.item.internetMessageId,
+        url: "/api/KudosService?InternetMessageID=" + Office.context.mailbox.item.internetMessageId,
         success: function (result) {
             var totalSenders = result.senders.length;
             if (totalSenders > 0) {
