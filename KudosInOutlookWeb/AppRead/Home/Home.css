@@ -4,20 +4,43 @@
 
 /* Page-specific styling */
 
-#details {
-    margin-left: 15px;
+#content-main{
+    position:relative;
+    top:-10px;
 }
 
-    #details th {
-        text-align: left;
-        padding-right: 10px;
-    }
-
-#from {
-    cursor: pointer;
-    color: #336699;
+.prompt-sec {
+    display:none;
 }
 
-    #from:focus, #from:hover, #from:active {
-        color: #4ea2df;
+.thumbnail-sec {
+
+}
+    .thumbnail-sec .thumbnail-list {
+        margin:0;
+        padding:0;
+        list-style:none;
+        position:relative;
     }
+    .thumbnail-sec .thumbnail-item{
+        float:left;
+        margin:0;
+        margin-bottom:6px;
+    }
+    .thumbnail-sec .thumbnail-item .data-name{
+        color:#666;
+    }
+
+.send-sec {
+}
+    .send-sec .comment {
+        height:28px;
+        width:250px;
+        padding-left:6px;
+        border:1px solid #aaa;
+    }
+
+.clear{
+    clear:both;
+    min-height:20px;
+}

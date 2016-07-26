@@ -31,38 +31,35 @@ function QueryKudosRequest() {
     $.ajax({
         url: serviceBaseUrl + "/api/KudosService?ItemID=" + encodeURIComponent(itemID),
         success: function (result) {
-            $("#thumbNail").html(result.senders.length);
-            var totalSenders = result.senders.length;
-            if (totalSenders > 0) {
-                for (var i = 0; i < totalSenders; ++i) {
-                    if (result.senders[i] == Office.context.mailbox.userProfile.displayName) {
-                        ChangeStatusToCantSendKudos();
-                    }
-                }
+            //$("#thumbNail").html(result.senders.length);
+            //var totalSenders = result.senders.length;
+            //if (totalSenders > 0) {
+            //    for (var i = 0; i < totalSenders; ++i) {
+            //        if (result.senders[i] == Office.context.mailbox.userProfile.displayName) {
+            //            ChangeStatusToCantSendKudos();
+            //        }
+            //    }
 
-                var newRow;
-                var table = document.getElementById("kudosQueryResult");
-                for (var i = 1; i < table.rows.length; ++i) {
-                    table.deleteRow(i);
-                }
+            //    var newRow;
+            //    var table = document.getElementById("kudosQueryResult");
+            //    for (var i = 1; i < table.rows.length; ++i) {
+            //        table.deleteRow(i);
+            //    }
 
-                while (document.getElementById("thumbNail").hasChildNodes()) {
-                    document.getElementById("thumbNail").removeChild(document.getElementById("thumbNail").firstChild);
-                }
-                for (var i = 0; i < totalSenders; ++i) {
-                    newRow = table.insertRow(table.rows.length);
-                    newRow.insertCell(0).innerHTML = result.senders[i];
-                    newRow.insertCell(1).innerHTML = result.sentTime[i];
-                    var img = document.createElement("img");
-                    img.src = "data:image/jpeg;base64," + result.thumbNails[i];
-                    img.width = 48;
-                    img.height = 48;
-                    document.getElementById("thumbNail").appendChild(img);
-                }
-            }
-        },
-        error: function (jqXHR, textStatus, errorThrown) {
-            console.log(textStatus, errorThrown);
+            //    while (document.getElementById("thumbNail").hasChildNodes()) {
+            //        document.getElementById("thumbNail").removeChild(document.getElementById("thumbNail").firstChild);
+            //    }
+            //    for (var i = 0; i < totalSenders; ++i) {
+            //        newRow = table.insertRow(table.rows.length);
+            //        newRow.insertCell(0).innerHTML = result.senders[i];
+            //        newRow.insertCell(1).innerHTML = result.sentTime[i];
+            //        var img = document.createElement("img");
+            //        img.src = "data:image/jpeg;base64," + result.thumbNails[i];
+            //        img.width = 48;
+            //        img.height = 48;
+            //        document.getElementById("thumbNail").appendChild(img);
+            //    }
+            //}
         }
     });
 }

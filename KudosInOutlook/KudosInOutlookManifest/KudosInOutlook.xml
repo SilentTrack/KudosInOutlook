@@ -41,7 +41,7 @@
     <Form xsi:type="ItemRead">
       <DesktopSettings>
         <SourceLocation DefaultValue="~remoteAppUrl/AppRead/Home/Home.html"/>
-        <RequestedHeight>400</RequestedHeight>
+        <RequestedHeight>180</RequestedHeight>
       </DesktopSettings>
     </Form>
   </FormSettings>
@@ -66,7 +66,7 @@
           <FunctionFile resid="functionFile" />
 
           <ExtensionPoint xsi:type="CustomPane">
-            <RequestedHeight>400</RequestedHeight>
+            <RequestedHeight>180</RequestedHeight>
             <SourceLocation resid="customPaneUrl"/>
             <Rule xsi:type="RuleCollection" Mode="Or">
               <Rule xsi:type="ItemIs" ItemType="Message"/>
