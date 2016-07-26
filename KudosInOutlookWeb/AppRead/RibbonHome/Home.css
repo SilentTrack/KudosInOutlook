@@ -78,3 +78,7 @@
             right:10px;
             bottom:-12px;
         }
+
+.templateLi {
+    visibility:hidden;
+}

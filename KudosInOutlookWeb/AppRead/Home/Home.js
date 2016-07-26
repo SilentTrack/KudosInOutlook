@@ -91,6 +91,7 @@ function MakeSendKudosJson() {
         "kudossender": Office.context.mailbox.userProfile.displayName,
         "kudosreceiver": item.sender.displayName,
         "itemid": Office.context.mailbox.item.itemId,
+        "subject":Office.context.mailbox.item.subject,
         "additionalmessage": document.getElementById("kudosComment").value,
         "senderemailaddress": Office.context.mailbox.userProfile.emailAddress
     };
