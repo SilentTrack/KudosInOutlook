@@ -80,6 +80,7 @@
     <Content Include="AppRead\Home\Home.html" />
     <Content Include="AppRead\Home\Home.js" />
     <Content Include="packages.config" />
+    <None Include="Properties\PublishProfiles\KudosWeb - Web Deploy.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
