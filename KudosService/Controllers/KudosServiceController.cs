@@ -21,6 +21,7 @@ namespace KudosService.Controllers
         public string KudosSender { get; set; }
         public string KudosReceiver { get; set; }
         public string ItemID { get; set; }
+        public string Subject { get; set; }
         public string AdditionalMessage { get; set; }
         public string SenderEmailAddress { get; set; }
     }
@@ -36,6 +37,7 @@ namespace KudosService.Controllers
     {
         public string sender;
         public string itemID;
+        public string subject;
         public DateTime sentTime;
         public string additionalMessage;
 
@@ -250,30 +252,35 @@ namespace KudosService.Controllers
             String connectionString = "Data Source=tcp:q4j05d8bmm.database.windows.net;Initial Catalog=Kudos;User ID=kudoweb;Password=User@123";
             SqlConnection connection = new SqlConnection(connectionString);
             connection.Open();
-            String commandText = "SELECT Sender, ItemID, SentTime, AdditionalMessage FROM KudosTable WHERE Receiver = '" + KudosReceiver + "'";
+            String commandText = "SELECT Sender, Subject, ItemID, SentTime, AdditionalMessage FROM KudosTable WHERE Receiver = '" + KudosReceiver + "'";
             SqlCommand selectCommand = new SqlCommand(commandText, connection);
             SqlDataAdapter selectAdapter = new SqlDataAdapter();
             selectAdapter.SelectCommand = selectCommand;
             DataSet dataSet = new DataSet();
             selectAdapter.SelectCommand.ExecuteNonQuery();
             selectAdapter.Fill(dataSet);
+
+            String countCommandText = "SELECT COUNT(ID) FROM KudosTable";
+            SqlCommand countCommand = new SqlCommand(countCommandText, connection);
+            int count = (int)countCommand.ExecuteScalar();
             connection.Close();
 
             int totalSenders = dataSet.Tables[0].Rows.Count;
             QueryReceiverResult result = new QueryReceiverResult();
+            result.totalKudos = count;
             result.kudosInfos = new KudosInfo[totalSenders];
             for (int i = 0; i < totalSenders; ++i)
             {
                 result.kudosInfos[i] = new KudosInfo();
                 result.kudosInfos[i].sender = (string)dataSet.Tables[0].Rows[i].ItemArray[0];
-                result.kudosInfos[i].itemID = (string)dataSet.Tables[0].Rows[i].ItemArray[1];
-                result.kudosInfos[i].sentTime = (DateTime)dataSet.Tables[0].Rows[i].ItemArray[2];
-                result.kudosInfos[i].additionalMessage = (string)dataSet.Tables[0].Rows[i].ItemArray[3];
+                result.kudosInfos[i].subject = (string)dataSet.Tables[0].Rows[i].ItemArray[1];
+                result.kudosInfos[i].itemID = (string)dataSet.Tables[0].Rows[i].ItemArray[2];
+                result.kudosInfos[i].sentTime = (DateTime)dataSet.Tables[0].Rows[i].ItemArray[3];
+                result.kudosInfos[i].additionalMessage = (string)dataSet.Tables[0].Rows[i].ItemArray[4];
             }
             Array.Sort(result.kudosInfos);
             result.months = GenerateFiveMonths(DateTime.Now);
             result.kudosPerMonth = CountKudosBefore(DateTime.Now, result.kudosInfos);
-            result.totalKudos = totalSenders;
             return result;
         }
 
@@ -329,11 +336,12 @@ namespace KudosService.Controllers
             string currentTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
             string base64 = await ThumbnailFetcher.FetchAsync(value.SenderEmailAddress);
             String commandText =
-                "INSERT INTO KudosTable (Sender, Receiver, ItemID, AdditionalMessage, SentTime, Thumbnail) VALUES ('"
+                "INSERT INTO KudosTable (Sender, Receiver, Subject, ItemID, AdditionalMessage, SentTime, Thumbnail) VALUES ('"
                 + value.KudosSender
                 + "', '" + value.KudosReceiver
+                + "', '" + value.Subject
                 + "', '" + value.ItemID
-                + "', '" + value.AdditionalMessage
+                + "', N'" + value.AdditionalMessage
                 + "', '" + currentTime
                 + "', '" + base64
                 + "')";

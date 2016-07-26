@@ -19,7 +19,7 @@ var serviceRequest;
 
 var months;
 var kudosData;
-var totalKudos;
+var kudosInfos;
 
 function InitPage() {
     $.ajax({
@@ -28,14 +28,17 @@ function InitPage() {
         success: function (result) {
             months = result.months;
             kudosData = result.kudosPerMonth;
-            totalKudos = result.totalKudos;
-            document.getElementById("dataTotal").innerHTML = totalKudos;
+            kudosInfos = result.kudosInfos;
+            $(".data-my").html(kudosInfos.length);
             var itemId = Office.context.mailbox.item.itemId;
             var ewsId = Office.context.mailbox.convertToEwsId(itemId, Office.MailboxEnums.RestVersion.v2_0);
             $("#testLink").click(function () {
                 Office.context.mailbox.displayMessageForm(ewsId);
             });
+
+            $(".data-total").html(result.totalKudos);
             ShowChart();
+            ShowHistory();
         },
         error: function () {
             months = result.months;
@@ -43,8 +46,42 @@ function InitPage() {
             totalKudos = result.totalKudos;
         }
     });
+}
 
+function ShowHistory()
+{
+    var list = document.getElementById("historyList");
+    while (list.hasChildNodes()) {
+        list.removeChild(list.firstChild);
+    }
+    var totalEntities = kudosInfos.length;
+    if (totalEntities > 5)
+    {
+        totalEntities = 5;
+    }
 
+    var liOld = $(".templateLi");
+    var liTemplate = liOld.clone();
+    liOld.remove();
+
+    
+    for (var i = 0; i < totalEntities; ++i)
+    {
+        var li = liTemplate.clone();
+        li.removeClass("templateLi").show().find(".data-sender").html(kudosInfos[i].sender);
+        li.find(".data-thread").html(kudosInfos[i].subject);
+        li.find(".comment").html(kudosInfos[i].additionalMessage);
+        li.find(".time").html(kudosInfos[i].sentTime);
+
+        var itemID = kudosInfos[i].itemID;
+        var ewsId = Office.context.mailbox.convertToEwsId(itemID, Office.MailboxEnums.RestVersion.v2_0);
+        li.find(".data-thread").data("ewsId", ewsId);
+        li.find(".data-thread").click(function () {
+            var id = $(this).data("ewsId");
+            Office.context.mailbox.displayMessageForm(id);
+        });
+        $(".data-ul").append(li);
+    }
 }
 
 function ShowChart() {
