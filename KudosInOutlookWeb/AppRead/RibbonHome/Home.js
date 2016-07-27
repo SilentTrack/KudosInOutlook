@@ -70,7 +70,7 @@ function ShowHistory()
         var li = liTemplate.clone();
         li.removeClass("templateLi").show().find(".data-sender").html(kudosInfos[i].senderName);
         li.find(".data-thread").html(kudosInfos[i].subject);
-        li.find(".comment").html(kudosInfos[i].additionalMessage);
+        li.find(".data-comment").html(kudosInfos[i].additionalMessage);
         li.find(".time").html(kudosInfos[i].sentDate);
 
         var itemID = kudosInfos[i].itemID;
