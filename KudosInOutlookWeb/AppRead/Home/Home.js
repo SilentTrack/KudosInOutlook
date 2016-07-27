@@ -8,6 +8,7 @@ var serviceRequest;
 //var serviceBaseUrl = "https://kudosservice.azurewebsites.net";
 var serviceBaseUrl = "https://localhost:44372";
 var totalSenders;
+var sending;
 
 (function () {
     "use strict";
@@ -24,6 +25,7 @@ function InitPage() {
     $("#footer").hide();
     //$(".thumbnail-item-template").slideUp();
     $(".thumbnail-item-template").hide();
+    sending = false;
     QueryKudosRequest();
 }
 
@@ -45,36 +47,58 @@ function QueryKudosRequest() {
                 $(".data-count").html(totalSenders);
                 $(".thumbnail-list").html();
 
+                var flag = false;
                 for (var i = 0; i < totalSenders; ++i) {
                     if (result.senders[i] == Office.context.mailbox.userProfile.emailAddress) {
-                        $(".send-sec").fadeOut();
+                        flag = true;
+                        break;
                     }
+                }
+                if (!flag) {
+                    $(".send-sec").fadeIn();
                 }
 
                 var liOld = $(".thumbnail-item-template");
                 for (var i = 0; i < totalSenders; ++i) {
                     var li = liOld.clone();
+                    $(".thumbnail-list").append(li);
                     li.removeClass("thumbnail-item-template").find(".data-img").attr("src", "data:image/jpeg;base64," + result.thumbNails[i]);
                     li.find(".data-name").html(result.senderNames[i]);
                     li.fadeIn();
-                    $(".thumbnail-list").append(li);
                 }
-
-                
             }
         }
     });
 }
 
 function SendKudosRequest() {
+    if (sending) {
+        return;
+    }
+    sending = true;
+    $(".ms-Button-label").html("Sending Kudos...");
     $.ajax({
         type: "POST",
         url: serviceBaseUrl + "/api/KudosService",
         contentType: "application/json; charset=utf-8",
         data: JSON.stringify(MakeSendKudosJson()),
         dataType: "json",
-        success: function () {
-            QueryKudosRequest();
+        success: function (result) {
+            $(".prompt-sec").hide();
+            $(".send-sec").hide();
+            $(".thumbnail-sec").fadeIn();
+            ++totalSenders;
+            $(".data-count").html(totalSenders);
+            $(".thumbnail-list").html();
+
+            var liOld = $(".thumbnail-item-template");
+            var li = liOld.clone();
+            $(".thumbnail-list").append(li);
+            li.removeClass("thumbnail-item-template").find(".data-img").attr("src", "data:image/jpeg;base64," + result);
+            li.find(".data-name").html(Office.context.mailbox.userProfile.displayName);
+            li.fadeIn();
+            $(".ms-Button-label").html("Send Kudos!");
+            sending = false;
         },
         error: function () {
         }
@@ -83,14 +107,19 @@ function SendKudosRequest() {
 
 function MakeSendKudosJson() {
     var item = Office.context.mailbox.item;
+    var comment = document.getElementById("kudosComment").value;
+    if (comment == "")
+    {
+        comment = "Thanks for your contribution!";
+    }
     var json = {
         "kudossender": Office.context.mailbox.userProfile.emailAddress,
         "kudossendername": Office.context.mailbox.userProfile.displayName,
         "kudosreceiver": item.sender.emailAddress,
-        "kudosreceivername" : item.sender.displayName,
+        "kudosreceivername": item.sender.displayName,
         "itemid": Office.context.mailbox.item.itemId,
         "subject": Office.context.mailbox.item.subject,
-        "additionalmessage": document.getElementById("kudosComment").value,
+        "additionalmessage": comment,
         "senderemailaddress": Office.context.mailbox.userProfile.emailAddress
     };
     return json;
