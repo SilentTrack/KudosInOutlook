@@ -23,8 +23,8 @@ var kudosInfos;
 
 function InitPage() {
     $.ajax({
-        //url: "https://localhost:44372/api/KudosService/5/?KudosReceiver=" + Office.context.mailbox.userProfile.displayName,
-        url: "https://localhost:44372/api/KudosService/5/?KudosReceiver=" + "Junxiang Wang",
+        //url: "https://localhost:44372/api/KudosService/5/?KudosReceiver=" + Office.context.mailbox.userProfile.emailAddress,
+        url: "https://localhost:44372/api/KudosService/5/?KudosReceiver=" + "junxw@microsoft.com",
         success: function (result) {
             months = result.months;
             kudosData = result.kudosPerMonth;
@@ -63,12 +63,10 @@ function ShowHistory()
     var liOld = $(".templateLi");
     var liTemplate = liOld.clone();
     liOld.remove();
-
-    
     for (var i = 0; i < totalEntities; ++i)
     {
         var li = liTemplate.clone();
-        li.removeClass("templateLi").show().find(".data-sender").html(kudosInfos[i].sender);
+        li.removeClass("templateLi").show().find(".data-sender").html(kudosInfos[i].senderName);
         li.find(".data-thread").html(kudosInfos[i].subject);
         li.find(".comment").html(kudosInfos[i].additionalMessage);
         li.find(".time").html(kudosInfos[i].sentTime);
