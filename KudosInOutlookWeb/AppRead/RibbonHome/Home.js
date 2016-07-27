@@ -71,7 +71,7 @@ function ShowHistory()
         li.removeClass("templateLi").show().find(".data-sender").html(kudosInfos[i].senderName);
         li.find(".data-thread").html(kudosInfos[i].subject);
         li.find(".comment").html(kudosInfos[i].additionalMessage);
-        li.find(".time").html(kudosInfos[i].sentTime);
+        li.find(".time").html(kudosInfos[i].sentDate);
 
         var itemID = kudosInfos[i].itemID;
         var ewsId = Office.context.mailbox.convertToEwsId(itemID, Office.MailboxEnums.RestVersion.v2_0);
