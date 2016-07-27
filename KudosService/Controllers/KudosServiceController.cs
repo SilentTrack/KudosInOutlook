@@ -19,7 +19,9 @@ namespace KudosService.Controllers
     public class SendKudosJsonReceiver
     {
         public string KudosSender { get; set; }
+        public string KudosSenderName { get; set; }
         public string KudosReceiver { get; set; }
+        public string KudosReceiverName { get; set; }
         public string ItemID { get; set; }
         public string Subject { get; set; }
         public string AdditionalMessage { get; set; }
@@ -29,6 +31,7 @@ namespace KudosService.Controllers
     public class QueryThreadResult
     {
         public string[] senders;
+        public string[] senderNames;
         public string[] sentTime;
         public string[] thumbNails;
     }
@@ -36,6 +39,7 @@ namespace KudosService.Controllers
     public class KudosInfo : IComparable
     {
         public string sender;
+        public string senderName;
         public string itemID;
         public string subject;
         public DateTime sentTime;
@@ -185,6 +189,7 @@ namespace KudosService.Controllers
 
             string result;
             var requestUrl = graphserviceClient.Users[query].Photo.AppendSegmentToRequestUrl("$value");
+            //var requestUrl = graphserviceClient.Users["junxw@microsoft.com"].Photo.AppendSegmentToRequestUrl("$value");
             var requestBuilder = new ProfilePhotoContentRequestBuilder(requestUrl, graphserviceClient);
 
             try
@@ -223,7 +228,7 @@ namespace KudosService.Controllers
             String connectionString = "Data Source=tcp:q4j05d8bmm.database.windows.net;Initial Catalog=Kudos;User ID=kudoweb;Password=User@123";
             SqlConnection connection = new SqlConnection(connectionString);
             connection.Open();
-            String commandText = "SELECT Sender, SentTime, Thumbnail FROM KudosTable WHERE ItemID = '" + ItemID + "'";
+            String commandText = "SELECT Sender, SenderName, SentTime, Thumbnail FROM KudosTable WHERE ItemID = '" + ItemID + "'";
             SqlCommand selectCommand = new SqlCommand(commandText, connection);
             SqlDataAdapter selectAdapter = new SqlDataAdapter();
             selectAdapter.SelectCommand = selectCommand;
@@ -235,13 +240,15 @@ namespace KudosService.Controllers
             int totalSenders = dataSet.Tables[0].Rows.Count;
             QueryThreadResult result = new QueryThreadResult();
             result.senders = new string[totalSenders];
+            result.senderNames = new string[totalSenders];
             result.sentTime = new string[totalSenders];
             result.thumbNails = new string[totalSenders];
             for (int i = 0; i < totalSenders; ++i)
             {
                 result.senders[i] = (string)dataSet.Tables[0].Rows[i].ItemArray[0];
-                result.sentTime[i] = ((DateTime)dataSet.Tables[0].Rows[i].ItemArray[1]).ToString("yyyy-MM-dd HH:mm:ss");
-                result.thumbNails[i] = (string)dataSet.Tables[0].Rows[i].ItemArray[2];
+                result.senderNames[i] = (string)dataSet.Tables[0].Rows[i].ItemArray[1];
+                result.sentTime[i] = ((DateTime)dataSet.Tables[0].Rows[i].ItemArray[2]).ToString("yyyy-MM-dd HH:mm:ss");
+                result.thumbNails[i] = (string)dataSet.Tables[0].Rows[i].ItemArray[3];
             }
             return result;
         }
@@ -252,7 +259,7 @@ namespace KudosService.Controllers
             String connectionString = "Data Source=tcp:q4j05d8bmm.database.windows.net;Initial Catalog=Kudos;User ID=kudoweb;Password=User@123";
             SqlConnection connection = new SqlConnection(connectionString);
             connection.Open();
-            String commandText = "SELECT Sender, Subject, ItemID, SentTime, AdditionalMessage FROM KudosTable WHERE Receiver = '" + KudosReceiver + "'";
+            String commandText = "SELECT Sender, SenderName, Subject, ItemID, SentTime, AdditionalMessage FROM KudosTable WHERE Receiver = '" + KudosReceiver + "'";
             SqlCommand selectCommand = new SqlCommand(commandText, connection);
             SqlDataAdapter selectAdapter = new SqlDataAdapter();
             selectAdapter.SelectCommand = selectCommand;
@@ -273,10 +280,11 @@ namespace KudosService.Controllers
             {
                 result.kudosInfos[i] = new KudosInfo();
                 result.kudosInfos[i].sender = (string)dataSet.Tables[0].Rows[i].ItemArray[0];
-                result.kudosInfos[i].subject = (string)dataSet.Tables[0].Rows[i].ItemArray[1];
-                result.kudosInfos[i].itemID = (string)dataSet.Tables[0].Rows[i].ItemArray[2];
-                result.kudosInfos[i].sentTime = (DateTime)dataSet.Tables[0].Rows[i].ItemArray[3];
-                result.kudosInfos[i].additionalMessage = (string)dataSet.Tables[0].Rows[i].ItemArray[4];
+                result.kudosInfos[i].senderName = (string)dataSet.Tables[0].Rows[i].ItemArray[1];
+                result.kudosInfos[i].subject = (string)dataSet.Tables[0].Rows[i].ItemArray[2];
+                result.kudosInfos[i].itemID = (string)dataSet.Tables[0].Rows[i].ItemArray[3];
+                result.kudosInfos[i].sentTime = (DateTime)dataSet.Tables[0].Rows[i].ItemArray[4];
+                result.kudosInfos[i].additionalMessage = (string)dataSet.Tables[0].Rows[i].ItemArray[5];
             }
             Array.Sort(result.kudosInfos);
             result.months = GenerateFiveMonths(DateTime.Now);
@@ -336,9 +344,11 @@ namespace KudosService.Controllers
             string currentTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
             string base64 = await ThumbnailFetcher.FetchAsync(value.SenderEmailAddress);
             String commandText =
-                "INSERT INTO KudosTable (Sender, Receiver, Subject, ItemID, AdditionalMessage, SentTime, Thumbnail) VALUES ('"
+                "INSERT INTO KudosTable (Sender, SenderName, Receiver, ReceiverName, Subject, ItemID, AdditionalMessage, SentTime, Thumbnail) VALUES ('"
                 + value.KudosSender
+                + "', '" + value.KudosSenderName
                 + "', '" + value.KudosReceiver
+                + "', '" + value.KudosReceiverName
                 + "', '" + value.Subject
                 + "', '" + value.ItemID
                 + "', N'" + value.AdditionalMessage
