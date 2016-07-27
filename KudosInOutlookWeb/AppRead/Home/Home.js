@@ -5,8 +5,8 @@
 /// <reference path="../App.js" />
 var xhr;
 var serviceRequest;
-//var serviceBaseUrl = "https://kudosservice.azurewebsites.net";
-var serviceBaseUrl = "https://localhost:44372";
+var serviceBaseUrl = "https://kudosservice.azurewebsites.net";
+//var serviceBaseUrl = "https://localhost:44372";
 
 (function () {
     "use strict";

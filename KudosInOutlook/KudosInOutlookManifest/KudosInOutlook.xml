@@ -17,9 +17,9 @@
   <ProviderName>Microsoft</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
   <!-- The display name of your add-in. Used on the store and various places of the Office UI such as the add-ins dialog. -->
-  <DisplayName DefaultValue="Send Kudos" />
+  <DisplayName DefaultValue="Kudos" />
   <Description DefaultValue="You can send Kudos to your peers"/>
-
+  <IconUrl DefaultValue="~remoteAppUrl/images/icon64.png" />
 
   <!-- Domains that will be allowed when navigating. For example, if you use ShowTaskpane and then have an href link, navigation will only be allowed if the domain is on this list. -->
   <AppDomains>
@@ -31,7 +31,7 @@
 
   <Hosts>
     <Host Name="Mailbox" />
-  </Hosts>
+  </Hosts>l
   <Requirements>
     <Sets>
       <Set Name="Mailbox" MinVersion="1.1" />
@@ -115,7 +115,7 @@
         <bt:Url id="messageEditTaskPaneUrl" DefaultValue="~remoteAppUrl/AppRead/RibbonHome/Home.html"/>
       </bt:Urls>
       <bt:ShortStrings>
-        <bt:String id="groupEditLabel" DefaultValue="My Kudos"/>
+        <bt:String id="groupEditLabel" DefaultValue=""/>
         <bt:String id="paneEditButtonLabel" DefaultValue="My Kudos"/>
         <bt:String id="paneEditSuperTipTitle" DefaultValue="View my Kudos"/>
       </bt:ShortStrings>

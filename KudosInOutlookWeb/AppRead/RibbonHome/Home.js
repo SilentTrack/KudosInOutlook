@@ -6,6 +6,9 @@
 var xhr;
 var serviceRequest;
 
+var serviceBaseUrl = "https://kudosservice.azurewebsites.net";
+//var serviceBaseUrl = "https://localhost:44372";
+
 (function () {
     "use strict";
 
@@ -23,8 +26,7 @@ var kudosInfos;
 
 function InitPage() {
     $.ajax({
-        //url: "https://localhost:44372/api/KudosService/5/?KudosReceiver=" + Office.context.mailbox.userProfile.emailAddress,
-        url: "https://localhost:44372/api/KudosService/5/?KudosReceiver=" + "junxw@microsoft.com",
+        url: serviceBaseUrl + "/api/KudosService/5/?KudosReceiver=" + Office.context.mailbox.userProfile.emailAddress,
         success: function (result) {
             months = result.months;
             kudosData = result.kudosPerMonth;
