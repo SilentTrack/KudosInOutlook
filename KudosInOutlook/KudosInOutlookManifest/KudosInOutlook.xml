@@ -10,15 +10,15 @@
   <!-- Begin Basic Settings: Add-in metadata, used for all versions of Office unless override provided. -->
 
   <!-- IMPORTANT! Id must be unique for your add-in, if you reuse this manifest ensure that you change this id to a new GUID. -->
-  <Id>e9d1661b-d1d4-4f94-9cbc-7df601d282e2</Id>
+  <Id>DBCFB1AC-AD8E-4F48-95AD-AA838A1EE664</Id>
 
   <!--Version. Updates from the store only get triggered if there is a version change. -->
   <Version>1.0.0.0</Version>
-  <ProviderName>[Provider name]</ProviderName>
+  <ProviderName>Microsoft</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
   <!-- The display name of your add-in. Used on the store and various places of the Office UI such as the add-ins dialog. -->
-  <DisplayName DefaultValue="KudosInOutlook" />
-  <Description DefaultValue="KudosInOutlook"/>
+  <DisplayName DefaultValue="Send Kudos" />
+  <Description DefaultValue="You can send Kudos to your peers"/>
 
 
   <!-- Domains that will be allowed when navigating. For example, if you use ShowTaskpane and then have an href link, navigation will only be allowed if the domain is on this list. -->
@@ -115,12 +115,12 @@
         <bt:Url id="messageEditTaskPaneUrl" DefaultValue="~remoteAppUrl/AppRead/RibbonHome/Home.html"/>
       </bt:Urls>
       <bt:ShortStrings>
-        <bt:String id="groupEditLabel" DefaultValue="KudosInOutlook"/>
-        <bt:String id="paneEditButtonLabel" DefaultValue="QueryKudos"/>
-        <bt:String id="paneEditSuperTipTitle" DefaultValue="333333333"/>
+        <bt:String id="groupEditLabel" DefaultValue="My Kudos"/>
+        <bt:String id="paneEditButtonLabel" DefaultValue="My Kudos"/>
+        <bt:String id="paneEditSuperTipTitle" DefaultValue="View my Kudos"/>
       </bt:ShortStrings>
       <bt:LongStrings>
-        <bt:String id="paneEditSuperTipDescription" DefaultValue="44444444444"/>
+        <bt:String id="paneEditSuperTipDescription" DefaultValue="You can view your Kudos and history here"/>
       </bt:LongStrings>
     </Resources>
   </VersionOverrides>

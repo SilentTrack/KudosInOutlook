@@ -5,8 +5,8 @@
 /// <reference path="../App.js" />
 var xhr;
 var serviceRequest;
-var serviceBaseUrl = "https://kudosservice.azurewebsites.net";
-//var serviceBaseUrl = "https://localhost:44372";
+//var serviceBaseUrl = "https://kudosservice.azurewebsites.net";
+var serviceBaseUrl = "https://localhost:44372";
 
 (function () {
     "use strict";
@@ -21,8 +21,6 @@ var serviceBaseUrl = "https://kudosservice.azurewebsites.net";
 
 function InitPage() {
     $("#footer").hide();
-    document.getElementById("label1").innerHTML = Office.context.mailbox.item.sender.displayName + "?";
-    document.getElementById("label2").innerHTML = Office.context.mailbox.item.sender.displayName;
     QueryKudosRequest();
 }
 
