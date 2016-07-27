@@ -30,13 +30,14 @@ function InitPage() {
 }
 
 function QueryKudosRequest() {
-    var internetMessageID = Office.context.mailbox.item.inernetMessageId;
+    var internetMessageID = Office.context.mailbox.item.internetMessageId;
     $(".data-receiver").html(Office.context.mailbox.item.sender.displayName);
     $.ajax({
         url: serviceBaseUrl + "/api/KudosService?InternetMessageID=" + encodeURIComponent(internetMessageID),
         success: function (result) {
             totalSenders = result.senders.length;
-            if (totalSenders == 0) {
+
+            if ((totalSenders == 0) && (Office.context.mailbox.item.sender.emailAddress != Office.context.mailbox.userProfile.emailAddress)) {
                 $(".prompt-sec").fadeIn();
                 $(".thumbnail-sec").fadeOut();
                 $(".send-sec").fadeIn();
@@ -47,7 +48,7 @@ function QueryKudosRequest() {
                 $(".data-count").html(totalSenders);
                 $(".thumbnail-list").html();
 
-                var flag = false;
+                var flag = Office.context.mailbox.item.sender.emailAddress == Office.context.mailbox.userProfile.emailAddress;
                 for (var i = 0; i < totalSenders; ++i) {
                     if (result.senders[i] == Office.context.mailbox.userProfile.emailAddress) {
                         flag = true;
