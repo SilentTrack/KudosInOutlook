@@ -10,16 +10,16 @@
   <!-- Begin Basic Settings: Add-in metadata, used for all versions of Office unless override provided. -->
 
   <!-- IMPORTANT! Id must be unique for your add-in, if you reuse this manifest ensure that you change this id to a new GUID. -->
-  <Id>DBCFB1AC-AD8E-4F48-95AD-AA838A1EE664</Id>
+  <Id>e9d1661b-d1d4-4f94-9cbc-7df601d282e2</Id>
 
   <!--Version. Updates from the store only get triggered if there is a version change. -->
   <Version>1.0.0.0</Version>
-  <ProviderName>Microsoft</ProviderName>
+  <ProviderName>[Provider name]</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
   <!-- The display name of your add-in. Used on the store and various places of the Office UI such as the add-ins dialog. -->
-  <DisplayName DefaultValue="Kudos" />
-  <Description DefaultValue="You can send Kudos to your peers"/>
-  <IconUrl DefaultValue="~remoteAppUrl/images/icon64.png" />
+  <DisplayName DefaultValue="KudosInOutlook" />
+  <Description DefaultValue="KudosInOutlook"/>
+
 
   <!-- Domains that will be allowed when navigating. For example, if you use ShowTaskpane and then have an href link, navigation will only be allowed if the domain is on this list. -->
   <AppDomains>
@@ -31,7 +31,7 @@
 
   <Hosts>
     <Host Name="Mailbox" />
-  </Hosts>l
+  </Hosts>
   <Requirements>
     <Sets>
       <Set Name="Mailbox" MinVersion="1.1" />
@@ -40,7 +40,7 @@
   <FormSettings>
     <Form xsi:type="ItemRead">
       <DesktopSettings>
-        <SourceLocation DefaultValue="~remoteAppUrl/AppRead/Home/Home.html"/>
+        <SourceLocation DefaultValue="https://kudosweb.azurewebsites.net/AppRead/Home/Home.html"/>
         <RequestedHeight>180</RequestedHeight>
       </DesktopSettings>
     </Form>
@@ -106,21 +106,21 @@
 
     <Resources>
       <bt:Images>
-        <bt:Image id="icon16" DefaultValue="~remoteAppUrl/images/icon16.png"/>
-        <bt:Image id="icon32" DefaultValue="~remoteAppUrl/images/icon32.png"/>
-        <bt:Image id="icon80" DefaultValue="~remoteAppUrl/images/icon80.png"/>
+        <bt:Image id="icon16" DefaultValue="https://kudosweb.azurewebsites.net/images/icon16.png"/>
+        <bt:Image id="icon32" DefaultValue="https://kudosweb.azurewebsites.net/images/icon32.png"/>
+        <bt:Image id="icon80" DefaultValue="https://kudosweb.azurewebsites.net/images/icon80.png"/>
       </bt:Images>
       <bt:Urls>
-        <bt:Url id="customPaneUrl" DefaultValue="~remoteAppUrl/AppRead/Home/Home.html"/>
-        <bt:Url id="messageEditTaskPaneUrl" DefaultValue="~remoteAppUrl/AppRead/RibbonHome/Home.html"/>
+        <bt:Url id="customPaneUrl" DefaultValue="https://kudosweb.azurewebsites.net/AppRead/Home/Home.html"/>
+        <bt:Url id="messageEditTaskPaneUrl" DefaultValue="https://kudosweb.azurewebsites.net/AppRead/RibbonHome/Home.html"/>
       </bt:Urls>
       <bt:ShortStrings>
-        <bt:String id="groupEditLabel" DefaultValue=""/>
-        <bt:String id="paneEditButtonLabel" DefaultValue="My Kudos"/>
-        <bt:String id="paneEditSuperTipTitle" DefaultValue="View my Kudos"/>
+        <bt:String id="groupEditLabel" DefaultValue="KudosInOutlook"/>
+        <bt:String id="paneEditButtonLabel" DefaultValue="QueryKudos"/>
+        <bt:String id="paneEditSuperTipTitle" DefaultValue="333333333"/>
       </bt:ShortStrings>
       <bt:LongStrings>
-        <bt:String id="paneEditSuperTipDescription" DefaultValue="You can view your Kudos and history here"/>
+        <bt:String id="paneEditSuperTipDescription" DefaultValue="44444444444"/>
       </bt:LongStrings>
     </Resources>
   </VersionOverrides>
