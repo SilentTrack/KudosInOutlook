@@ -43,12 +43,14 @@ namespace KudosService.Controllers
         public string itemID;
         public string subject;
         public DateTime sentTime;
+        public string sentDate;
         public string additionalMessage;
 
         public KudosInfo()
         {
             sender = "";
             itemID = "";
+            sentDate = "";
             sentTime = new DateTime();
             additionalMessage = "";
         }
@@ -284,6 +286,7 @@ namespace KudosService.Controllers
                 result.kudosInfos[i].subject = (string)dataSet.Tables[0].Rows[i].ItemArray[2];
                 result.kudosInfos[i].itemID = (string)dataSet.Tables[0].Rows[i].ItemArray[3];
                 result.kudosInfos[i].sentTime = (DateTime)dataSet.Tables[0].Rows[i].ItemArray[4];
+                result.kudosInfos[i].sentDate = result.kudosInfos[i].sentTime.ToShortDateString();
                 result.kudosInfos[i].additionalMessage = (string)dataSet.Tables[0].Rows[i].ItemArray[5];
             }
             Array.Sort(result.kudosInfos);

@@ -7,6 +7,7 @@ var xhr;
 var serviceRequest;
 //var serviceBaseUrl = "https://kudosservice.azurewebsites.net";
 var serviceBaseUrl = "https://localhost:44372";
+var totalSenders;
 
 (function () {
     "use strict";
@@ -21,7 +22,8 @@ var serviceBaseUrl = "https://localhost:44372";
 
 function InitPage() {
     $("#footer").hide();
-    $(".thumbnail-item-template").hide;
+    //$(".thumbnail-item-template").slideUp();
+    $(".thumbnail-item-template").hide();
     QueryKudosRequest();
 }
 
@@ -31,37 +33,40 @@ function QueryKudosRequest() {
     $.ajax({
         url: serviceBaseUrl + "/api/KudosService?ItemID=" + encodeURIComponent(itemID),
         success: function (result) {
-            var totalSenders = result.senders.length;
+            totalSenders = result.senders.length;
             if (totalSenders == 0) {
-                $(".prompt-sec").show();
-                $(".thumbnail-sec").hide();
+                $(".prompt-sec").fadeIn();
+                $(".thumbnail-sec").fadeOut();
+                $(".send-sec").fadeIn();
             }
             else {
-                $(".prompt-sec").hide();
-                $(".thumbnail-sec").show();
-                $(".thumbnail-item-template").hide();
+                $(".prompt-sec").fadeOut();
+                $(".thumbnail-sec").fadeIn();
                 $(".data-count").html(totalSenders);
                 $(".thumbnail-list").html();
-                var liOld = $(".thumbnail-item-template");
-                for (var i = 0; i < totalSenders; ++i) {
-                    var li = liOld.clone();
-                    li.removeClass("thumbnail-item-template").show().find(".data-img").attr("src", "data:image/jpeg;base64,"+result.thumbNails[i]);
-                    li.find(".data-name").html(result.senderNames[i]);
-                    $(".thumbnail-list").append(li);
-                }
 
                 for (var i = 0; i < totalSenders; ++i) {
                     if (result.senders[i] == Office.context.mailbox.userProfile.emailAddress) {
-                        ChangeStatusToCantSendKudos();
+                        $(".send-sec").fadeOut();
                     }
                 }
+
+                var liOld = $(".thumbnail-item-template");
+                for (var i = 0; i < totalSenders; ++i) {
+                    var li = liOld.clone();
+                    li.removeClass("thumbnail-item-template").find(".data-img").attr("src", "data:image/jpeg;base64," + result.thumbNails[i]);
+                    li.find(".data-name").html(result.senderNames[i]);
+                    li.fadeIn();
+                    $(".thumbnail-list").append(li);
+                }
+
+                
             }
         }
     });
 }
 
 function SendKudosRequest() {
-    ChangeStatusToCantSendKudos();
     $.ajax({
         type: "POST",
         url: serviceBaseUrl + "/api/KudosService",
@@ -75,10 +80,6 @@ function SendKudosRequest() {
         }
     });
 };
-
-function ChangeStatusToCantSendKudos() {
-    $(".send-sec").hide();
-}
 
 function MakeSendKudosJson() {
     var item = Office.context.mailbox.item;
