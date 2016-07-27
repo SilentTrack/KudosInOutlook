@@ -14,11 +14,11 @@
 
   <!--Version. Updates from the store only get triggered if there is a version change. -->
   <Version>1.0.0.0</Version>
-  <ProviderName>[Provider name]</ProviderName>
+  <ProviderName>Microsoft</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
   <!-- The display name of your add-in. Used on the store and various places of the Office UI such as the add-ins dialog. -->
-  <DisplayName DefaultValue="KudosInOutlook" />
-  <Description DefaultValue="KudosInOutlook"/>
+  <DisplayName DefaultValue="Kudos" />
+  <Description DefaultValue="There are often times circumstances where you want to appreciate someone in the context of the mail thread. You are probably seeking something similar to a Facebook-Like or a WeChat-Like in Outlook. That is what this add-in brings to Outlook."/>
 
 
   <!-- Domains that will be allowed when navigating. For example, if you use ShowTaskpane and then have an href link, navigation will only be allowed if the domain is on this list. -->
@@ -40,13 +40,13 @@
   <FormSettings>
     <Form xsi:type="ItemRead">
       <DesktopSettings>
-        <SourceLocation DefaultValue="https://kudosweb.azurewebsites.net/AppRead/Home/Home.html"/>
+        <SourceLocation DefaultValue="~remoteAppUrl/AppRead/Home/Home.html"/>
         <RequestedHeight>180</RequestedHeight>
       </DesktopSettings>
     </Form>
   </FormSettings>
 
-  <Permissions>ReadWriteItem</Permissions>
+  <Permissions>ReadItem</Permissions>
   <Rule xsi:type="RuleCollection" Mode="Or">
     <Rule xsi:type="ItemIs" ItemType="Message" FormType="Read" />
   </Rule>
@@ -74,7 +74,7 @@
             </Rule>
           </ExtensionPoint>
 
-          <!-- Message Compose -->
+          <!-- Message Read -->
           <ExtensionPoint xsi:type="MessageReadCommandSurface">
             <!-- Use the default tab of the ExtensionPoint or create your own with <CustomTab id="myTab"> -->
             <OfficeTab id="TabDefault">
@@ -106,21 +106,21 @@
 
     <Resources>
       <bt:Images>
-        <bt:Image id="icon16" DefaultValue="https://kudosweb.azurewebsites.net/images/icon16.png"/>
-        <bt:Image id="icon32" DefaultValue="https://kudosweb.azurewebsites.net/images/icon32.png"/>
-        <bt:Image id="icon80" DefaultValue="https://kudosweb.azurewebsites.net/images/icon80.png"/>
+        <bt:Image id="icon16" DefaultValue="~remoteAppUrl/images/icon16.png"/>
+        <bt:Image id="icon32" DefaultValue="~remoteAppUrl/images/icon32.png"/>
+        <bt:Image id="icon80" DefaultValue="~remoteAppUrl/images/icon80.png"/>
       </bt:Images>
       <bt:Urls>
-        <bt:Url id="customPaneUrl" DefaultValue="https://kudosweb.azurewebsites.net/AppRead/Home/Home.html"/>
-        <bt:Url id="messageEditTaskPaneUrl" DefaultValue="https://kudosweb.azurewebsites.net/AppRead/RibbonHome/Home.html"/>
+        <bt:Url id="customPaneUrl" DefaultValue="~remoteAppUrl/AppRead/Home/Home.html"/>
+        <bt:Url id="messageEditTaskPaneUrl" DefaultValue="~remoteAppUrl/AppRead/RibbonHome/Home.html"/>
       </bt:Urls>
       <bt:ShortStrings>
-        <bt:String id="groupEditLabel" DefaultValue="KudosInOutlook"/>
-        <bt:String id="paneEditButtonLabel" DefaultValue="QueryKudos"/>
-        <bt:String id="paneEditSuperTipTitle" DefaultValue="333333333"/>
+        <bt:String id="groupEditLabel" DefaultValue=" "/>
+        <bt:String id="paneEditButtonLabel" DefaultValue="My Kudos"/>
+        <bt:String id="paneEditSuperTipTitle" DefaultValue="View my Kudos"/>
       </bt:ShortStrings>
       <bt:LongStrings>
-        <bt:String id="paneEditSuperTipDescription" DefaultValue="44444444444"/>
+        <bt:String id="paneEditSuperTipDescription" DefaultValue="You can view your Kudos and history here"/>
       </bt:LongStrings>
     </Resources>
   </VersionOverrides>

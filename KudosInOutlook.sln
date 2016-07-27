@@ -1,9 +1,12 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KudosInOutlook", "KudosInOutlook\KudosInOutlook.csproj", "{924B669D-2222-4C2A-A484-3A021A624C71}"
+	ProjectSection(ProjectDependencies) = postProject
+		{79B484B5-5A13-4E06-A800-C6BD577AFA8B} = {79B484B5-5A13-4E06-A800-C6BD577AFA8B}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KudosInOutlookWeb", "KudosInOutlookWeb\KudosInOutlookWeb.csproj", "{E637430F-3C51-412F-AFCD-469CF7B5642F}"
 EndProject

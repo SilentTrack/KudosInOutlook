@@ -5,8 +5,8 @@
 /// <reference path="../App.js" />
 var xhr;
 var serviceRequest;
-var serviceBaseUrl = "https://kudosservice.azurewebsites.net";
-//var serviceBaseUrl = "https://localhost:44372";
+//var serviceBaseUrl = "https://kudosservice.azurewebsites.net";
+var serviceBaseUrl = "https://localhost:44372";
 var totalSenders;
 var sending;
 
@@ -100,7 +100,7 @@ function SendKudosRequest() {
             $(".ms-Button-label").html("Send Kudos!");
             sending = false;
         },
-        error: function () {
+        error: function (error) {
         }
     });
 };
