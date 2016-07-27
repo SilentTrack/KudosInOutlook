@@ -23,6 +23,7 @@ namespace KudosService.Controllers
         public string KudosReceiver { get; set; }
         public string KudosReceiverName { get; set; }
         public string ItemID { get; set; }
+        public string InternetMessageID { get; set; }
         public string Subject { get; set; }
         public string AdditionalMessage { get; set; }
         public string SenderEmailAddress { get; set; }
@@ -225,12 +226,12 @@ namespace KudosService.Controllers
 
         public static string[] monthsRef = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
 
-        public QueryThreadResult Get(string ItemID)
+        public QueryThreadResult Get(string InternetMessageID)
         {
             String connectionString = "Data Source=tcp:q4j05d8bmm.database.windows.net;Initial Catalog=Kudos;User ID=kudoweb;Password=User@123";
             SqlConnection connection = new SqlConnection(connectionString);
             connection.Open();
-            String commandText = "SELECT Sender, SenderName, SentTime, Thumbnail FROM KudosTable WHERE ItemID = '" + ItemID + "'";
+            String commandText = "SELECT Sender, SenderName, SentTime, Thumbnail FROM KudosTable WHERE InternetMessageID = '" + InternetMessageID + "'";
             SqlCommand selectCommand = new SqlCommand(commandText, connection);
             SqlDataAdapter selectAdapter = new SqlDataAdapter();
             selectAdapter.SelectCommand = selectCommand;
@@ -347,13 +348,14 @@ namespace KudosService.Controllers
             string currentTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
             string base64 = await ThumbnailFetcher.FetchAsync(value.SenderEmailAddress);
             String commandText =
-                "INSERT INTO KudosTable (Sender, SenderName, Receiver, ReceiverName, Subject, ItemID, AdditionalMessage, SentTime, Thumbnail) VALUES ('"
+                "INSERT INTO KudosTable (Sender, SenderName, Receiver, ReceiverName, Subject, ItemID, InternetMessageID, AdditionalMessage, SentTime, Thumbnail) VALUES ('"
                 + value.KudosSender
                 + "', '" + value.KudosSenderName
                 + "', '" + value.KudosReceiver
                 + "', '" + value.KudosReceiverName
                 + "', '" + value.Subject
                 + "', '" + value.ItemID
+                + "', '" + value.InternetMessageID
                 + "', N'" + value.AdditionalMessage
                 + "', '" + currentTime
                 + "', '" + base64

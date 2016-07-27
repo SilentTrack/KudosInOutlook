@@ -30,10 +30,10 @@ function InitPage() {
 }
 
 function QueryKudosRequest() {
-    var itemID = Office.context.mailbox.item.itemId;
+    var internetMessageID = Office.context.mailbox.item.inernetMessageId;
     $(".data-receiver").html(Office.context.mailbox.item.sender.displayName);
     $.ajax({
-        url: serviceBaseUrl + "/api/KudosService?ItemID=" + encodeURIComponent(itemID),
+        url: serviceBaseUrl + "/api/KudosService?InternetMessageID=" + encodeURIComponent(internetMessageID),
         success: function (result) {
             totalSenders = result.senders.length;
             if (totalSenders == 0) {
@@ -118,6 +118,7 @@ function MakeSendKudosJson() {
         "kudosreceiver": item.sender.emailAddress,
         "kudosreceivername": item.sender.displayName,
         "itemid": Office.context.mailbox.item.itemId,
+        "internetmessageid": Office.context.mailbox.item.internetMessageId,
         "subject": Office.context.mailbox.item.subject,
         "additionalmessage": comment,
         "senderemailaddress": Office.context.mailbox.userProfile.emailAddress
