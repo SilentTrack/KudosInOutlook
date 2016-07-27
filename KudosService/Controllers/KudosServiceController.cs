@@ -339,7 +339,7 @@ namespace KudosService.Controllers
         }
 
         // POST: api/KudosService
-        public async Task<int> Post([FromBody]SendKudosJsonReceiver value)
+        public async Task<string> Post([FromBody]SendKudosJsonReceiver value)
         {
             String connectionString = "Data Source=tcp:q4j05d8bmm.database.windows.net;Initial Catalog=Kudos;User ID=kudoweb;Password=User@123";
             SqlConnection connection = new SqlConnection(connectionString);
@@ -361,7 +361,7 @@ namespace KudosService.Controllers
             SqlCommand insertCommand = new SqlCommand(commandText, connection);
             insertCommand.ExecuteNonQuery();
             connection.Close();
-            return 3154;
+            return base64;
         }
 
         // PUT: api/KudosService/5
