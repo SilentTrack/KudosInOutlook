@@ -59,7 +59,7 @@ namespace KudosService.Controllers
         public int CompareTo(Object obj)
         {
             KudosInfo t = obj as KudosInfo;
-            return sentTime.CompareTo(t.sentTime);
+            return 1- sentTime.CompareTo(t.sentTime);
         }
     }
 
@@ -80,10 +80,10 @@ namespace KudosService.Controllers
         // If the file is already present, it loads its content in the ADAL cache
 
         //public FileTokenCache(string filePath = @".\TokenCache.dat")
-        public FileTokenCache(string filePath = @"C:/Projects/TokenCache.dat")
+        public FileTokenCache()
         {
-            string s = System.Environment.CurrentDirectory;
-            CacheFilePath = filePath;
+            CacheFilePath = Path.Combine(HttpContext.Current.Server.MapPath("~/App_Data"), "TokenCache.dat");
+
             this.AfterAccess = AfterAccessNotification;
             this.BeforeAccess = BeforeAccessNotification;
             lock (FileLock)
@@ -262,7 +262,7 @@ namespace KudosService.Controllers
             String connectionString = "Data Source=tcp:q4j05d8bmm.database.windows.net;Initial Catalog=Kudos;User ID=kudoweb;Password=User@123";
             SqlConnection connection = new SqlConnection(connectionString);
             connection.Open();
-            String commandText = "SELECT Sender, SenderName, Subject, ItemID, SentTime, AdditionalMessage FROM KudosTable WHERE Receiver = '" + KudosReceiver + "'";
+            String commandText = "SELECT Sender, SenderName, Subject, ItemID, SentTime, AdditionalMessage FROM KudosTable WHERE Receiver = '" + KudosReceiver + "' order by senttime desc";
             SqlCommand selectCommand = new SqlCommand(commandText, connection);
             SqlDataAdapter selectAdapter = new SqlDataAdapter();
             selectAdapter.SelectCommand = selectCommand;
@@ -290,7 +290,7 @@ namespace KudosService.Controllers
                 result.kudosInfos[i].sentDate = result.kudosInfos[i].sentTime.ToShortDateString();
                 result.kudosInfos[i].additionalMessage = (string)dataSet.Tables[0].Rows[i].ItemArray[5];
             }
-            Array.Sort(result.kudosInfos);
+            //Array.Sort(result.kudosInfos);
             result.months = GenerateFiveMonths(DateTime.Now);
             result.kudosPerMonth = CountKudosBefore(DateTime.Now, result.kudosInfos);
             return result;
